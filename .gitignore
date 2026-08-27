@@ -1,0 +1,12 @@
+firebase-admin-key.json
+.vercel
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+node_modules/

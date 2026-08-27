@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Mausam</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+<main class="onboarding">
+
+    <div class="onboarding-card">
+
+        <div class="onboarding-brand">
+
+            <div class="brand-icon">
+                M
+            </div>
+
+            <div>
+                <h2>MAUSAM</h2>
+                <span>Personalized Weather</span>
+            </div>
+
+        </div>
+
+
+        <section class="onboarding-content">
+
+            <p class="eyebrow">
+                WELCOME BACK
+            </p>
+
+            <h1>
+                Login to Mausam
+            </h1>
+
+            <p class="onboarding-subtitle">
+                Sign in to access your personalized
+                weather experience.
+            </p>
+
+
+            <form id="login-form">
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Your password"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn">
+
+                    Login →
+
+                </button>
+
+            </form>
+
+
+            <p style="margin-top: 20px; text-align: center;">
+
+                Don't have an account?
+
+                <a href="/signup">
+                    Create one
+                </a>
+
+            </p>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script type="module">
+
+import {
+    signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+import {
+    auth
+} from "{{ url_for('static', filename='js/firebase.js') }}";
+
+
+const loginForm =
+    document.getElementById("login-form");
+
+
+loginForm.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+
+        const email =
+            document.getElementById(
+                "email"
+            ).value.trim();
+
+
+        const password =
+            document.getElementById(
+                "password"
+            ).value;
+
+
+        try {
+
+            const userCredential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+            const user =
+                userCredential.user;
+
+
+            console.log(
+                "Firebase login successful:",
+                user.uid
+            );
+
+
+            // Get Firebase ID token
+            const idToken =
+                await user.getIdToken();
+
+
+            console.log(
+                "ID token obtained"
+            );
+
+
+            // Send authenticated user to Flask
+           const response =
+    await fetch(
+        "/auth/login",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+                idToken: idToken
+            })
+        }
+    );
+
+
+const result =
+    await response.json();
+
+
+if (!response.ok || !result.success) {
+
+    throw new Error(
+        result.error ||
+        "Authentication failed"
+    );
+
+}
+
+
+window.location.href =
+    "/home";
+
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+
+            alert(
+                error.message
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

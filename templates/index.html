@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mausam | Personalized Weather</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                M
+            </div>
+
+            <div>
+                <h2>MAUSAM</h2>
+                <span>Personalized Weather</span>
+            </div>
+
+        </div>
+
+
+        <div class="location">
+
+            <span>📍</span>
+
+            <span id="user-location">
+                Loading location...
+            </span>
+
+        </div>
+
+
+        <div class="profile">
+
+            <div class="profile-avatar">
+                M
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+
+        <!-- ================= GREETING ================= -->
+
+        <section class="hero">
+
+            <div>
+
+                <p class="eyebrow">
+                    PERSONALIZED FOR YOU
+                </p>
+
+                <h1>
+                    Good afternoon,
+                    <span>{{ user_name }}.</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Here's what matters to you today.
+                </p>
+
+            </div>
+
+
+            <button class="settings-btn">
+                ⚙ Preferences
+            </button>
+
+        </section>
+
+
+        <!-- ================= PERSONA SELECTOR ================= -->
+
+        <section
+            class="persona-section"
+            id="persona-section">
+
+        </section>
+
+
+        <!-- ================= WEATHER HERO ================= -->
+
+        <section class="weather-grid">
+
+
+            <div class="weather-card main-weather">
+
+                <div class="weather-top">
+
+                    <div>
+
+                        <p class="card-label">
+                            CURRENT WEATHER
+                        </p>
+
+                        <h2 class="temperature">
+                            {{ weather.current.temperature }}°
+                        </h2>
+
+                        <p class="condition">
+                            {{ weather.current.condition }}
+                        </p>
+
+                        <p class="feels">
+                            Feels like
+                            {{ weather.current.feels_like }}°
+                        </p>
+
+                    </div>
+
+
+                    <div class="weather-symbol">
+                        ☁️
+                    </div>
+
+                </div>
+
+
+                <div class="temperature-range">
+
+                    <span>
+                        <strong>H</strong>
+                        {{ weather.current.high }}°
+                    </span>
+
+                    <span>
+                        <strong>L</strong>
+                        {{ weather.current.low }}°
+                    </span>
+
+                </div>
+
+
+                <div class="weather-footer">
+
+                    <span>
+                        🌅 Sunrise
+                        {{ weather.current.sunrise }}
+                    </span>
+
+                    <span>
+                        🌇 Sunset
+                        {{ weather.current.sunset }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= INSIGHT ================= -->
+
+            <div class="weather-card insight-card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <p class="card-label">
+                            TODAY'S INSIGHT
+                        </p>
+
+                        <h3 id="insight-title">
+                            Great conditions for a run
+                        </h3>
+
+                    </div>
+
+
+                    <div class="insight-icon">
+                        🏃
+                    </div>
+
+                </div>
+
+
+                <div class="insight-score">
+
+                    <div>
+
+                        <span>
+                            PERSONALIZED SCORE
+                        </span>
+
+                        <strong id="score">
+                            78
+                        </strong>
+
+                        <small>
+                            /100
+                        </small>
+
+                    </div>
+
+
+                    <div class="score-bar">
+
+                        <div id="score-progress"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="insight-details">
+
+                    <div>
+
+                        <span>
+                            Best time
+                        </span>
+
+                        <strong id="best-time">
+                            6:00 – 7:30 AM
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Rain probability
+                        </span>
+
+                        <strong>
+                            {{ weather.current.rain_probability }}%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= WEATHER METRICS ================= -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+
+                    <p class="card-label">
+                        WEATHER OVERVIEW
+                    </p>
+
+                    <h2>
+                        Today's conditions
+                    </h2>
+
+                </div>
+
+
+                <button class="view-btn">
+                    Full forecast →
+                </button>
+
+            </div>
+
+
+            <div class="metrics">
+
+
+                <div class="metric-card">
+
+                    <span class="metric-icon">
+                        💧
+                    </span>
+
+                    <div>
+
+                        <span>
+                            Humidity
+                        </span>
+
+                        <strong>
+                            {{ weather.current.humidity }}%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <span class="metric-icon">
+                        💨
+                    </span>
+
+                    <div>
+
+                        <span>
+                            Wind
+                        </span>
+
+                        <strong>
+                            {{ weather.current.wind_speed }} km/h
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <span class="metric-icon">
+                        ☀️
+                    </span>
+
+                    <div>
+
+                        <span>
+                            UV Index
+                        </span>
+
+                        <strong>
+                            {{ weather.current.uv_index }} Moderate
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <span class="metric-icon">
+                        🌧
+                    </span>
+
+                    <div>
+
+                        <span>
+                            Rain probability
+                        </span>
+
+                        <strong>
+                            {{ weather.current.rain_probability }}%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PERSONALIZED RECOMMENDATIONS ================= -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+
+                    <p class="card-label">
+                        PERSONALIZED FOR YOU
+                    </p>
+
+                    <h2>
+                        Weather insights
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="recommendations"
+                id="recommendations">
+
+
+                <div class="recommendation">
+
+                    <div
+                        class="recommendation-icon green"
+                        id="rec-icon-1">
+
+                        ✓
+
+                    </div>
+
+
+                    <div>
+
+                        <h3 id="rec-title-1">
+                            Good time for outdoor activity
+                        </h3>
+
+                        <p id="rec-text-1">
+                            Conditions are comfortable this morning
+                            with moderate wind and low rain probability.
+                        </p>
+
+                    </div>
+
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+                <div class="recommendation">
+
+                    <div
+                        class="recommendation-icon orange"
+                        id="rec-icon-2">
+
+                        !
+
+                    </div>
+
+
+                    <div>
+
+                        <h3 id="rec-title-2">
+                            High humidity
+                        </h3>
+
+                        <p id="rec-text-2">
+                            Humidity is currently high.
+                            Stay hydrated during prolonged
+                            outdoor activity.
+                        </p>
+
+                    </div>
+
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+                <div class="recommendation">
+
+                    <div
+                        class="recommendation-icon blue"
+                        id="rec-icon-3">
+
+                        ☁
+
+                    </div>
+
+
+                    <div>
+
+                        <h3 id="rec-title-3">
+                            Rain expected later today
+                        </h3>
+
+                        <p id="rec-text-3">
+                            Rain probability increases
+                            after 5:00 PM.
+                        </p>
+
+                    </div>
+
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <footer>
+
+            <div>
+
+                <strong>
+                    MAUSAM
+                </strong>
+
+                <span>
+                    Personalized Weather Intelligence
+                </span>
+
+            </div>
+
+
+            <span>
+                Weather data powered by Open-Meteo
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+    <!-- ================= PERSONALIZATION DATA ================= -->
+
+    <script
+        id="mausam-data"
+        type="application/json">
+
+        {{ personalized_data | tojson }}
+
+    </script>
+
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}">
+    </script>
+
+
+    <!-- ================= USER LOCATION ================= -->
+
+   <!-- ================= USER LOCATION ================= -->
+
+<script id="user-location-data" type="application/json">
+    {{ user_location | tojson }}
+</script>
+
+<script>
+
+    const locationDataElement =
+        document.getElementById(
+            "user-location-data"
+        );
+
+    const userLocation =
+        JSON.parse(
+            locationDataElement.textContent
+        );
+
+    const locationElement =
+        document.getElementById(
+            "user-location"
+        );
+
+
+    if (
+        userLocation &&
+        userLocation.city &&
+        userLocation.state
+    ) {
+
+        locationElement.textContent =
+            `${userLocation.city}, ${userLocation.state}`;
+
+    } else {
+
+        locationElement.textContent =
+            "Location unavailable";
+
+    }
+
+</script>
+
+
+<!-- ================= PERSONA SELECTOR ================= -->
+
+<script id="user-interests-data" type="application/json">
+    {{ user_interests | tojson }}
+</script>
+
+<script>
+
+    const interestsDataElement =
+        document.getElementById(
+            "user-interests-data"
+        );
+
+
+    const selectedInterests =
+        JSON.parse(
+            interestsDataElement.textContent
+        );
+
+
+    const personaSection =
+        document.getElementById(
+            "persona-section"
+        );
+
+
+    const personaInfo = {
+
+        health: {
+            icon: "♥",
+            name: "Health"
+        },
+
+        fitness: {
+            icon: "🏃",
+            name: "Fitness"
+        },
+
+        beach: {
+            icon: "🏖️",
+            name: "Beach"
+        },
+
+        travel: {
+            icon: "✈",
+            name: "Travel"
+        },
+
+        family: {
+            icon: "👨‍👩‍👧",
+            name: "Family"
+        },
+
+        agriculture: {
+            icon: "🌱",
+            name: "Agriculture"
+        },
+
+        commute: {
+            icon: "🚗",
+            name: "Commute"
+        },
+
+        events: {
+            icon: "💍",
+            name: "Events"
+        }
+
+    };
+
+
+    function createPersonaButtons() {
+
+        personaSection.innerHTML = "";
+
+
+        selectedInterests.forEach(
+            (interest, index) => {
+
+                const info =
+                    personaInfo[interest];
+
+
+                if (!info) {
+                    return;
+                }
+
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.className =
+                    "persona";
+
+
+                if (index === 0) {
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+                button.dataset.persona =
+                    interest;
+
+
+                button.innerHTML = `
+
+                    <span class="persona-icon">
+                        ${info.icon}
+                    </span>
+
+                    <span>
+                        ${info.name}
+                    </span>
+
+                `;
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        document
+                            .querySelectorAll(
+                                ".persona"
+                            )
+                            .forEach(
+                                item => {
+
+                                    item.classList.remove(
+                                        "active"
+                                    );
+
+                                }
+                            );
+
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        showPersona(
+                            interest
+                        );
+
+                    }
+                );
+
+
+                personaSection.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+        if (
+            selectedInterests.length > 0
+        ) {
+
+            showPersona(
+                selectedInterests[0]
+            );
+
+        }
+
+    }
+
+
+    function showPersona(persona) {
+
+        console.log(
+            "Selected persona:",
+            persona
+        );
+
+
+        if (
+            typeof updatePersona ===
+            "function"
+        ) {
+
+            updatePersona(
+                persona
+            );
+
+        }
+
+    }
+
+
+    createPersonaButtons();
+
+</script>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+<!-- USER LOCATION script -->
+
+<!-- PERSONA SELECTOR scripts -->
+
+</body>
+</html>
+
+</body>
+
+</html>

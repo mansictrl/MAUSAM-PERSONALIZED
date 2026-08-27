@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Get Started | Mausam</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <main class="onboarding">
+
+        <div class="onboarding-card">
+
+            <div class="onboarding-brand">
+                <div class="brand-icon">M</div>
+
+                <div>
+                    <h2>MAUSAM</h2>
+                    <span>Personalized Weather</span>
+                </div>
+            </div>
+
+
+            <div class="onboarding-progress">
+                <span class="progress-active"></span>
+                <span></span>
+                <span></span>
+            </div>
+
+
+            <section class="onboarding-content">
+
+                <p class="eyebrow">
+                    LET'S PERSONALIZE YOUR MAUSAM
+                </p>
+
+                <h1>
+                    What matters to you?
+                </h1>
+
+                <p class="onboarding-subtitle">
+                    Select everything you want Mausam to
+                    help you with. We'll build your homepage
+                    around your needs.
+                </p>
+
+
+                <div class="interest-grid">
+
+                    <button class="interest-card"
+                            data-interest="health">
+                        <span>❤️</span>
+                        <strong>Health & wellness</strong>
+                        <small>AQI, UV, humidity & air quality</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="fitness">
+                        <span>🏃</span>
+                        <strong>Fitness & outdoors</strong>
+                        <small>Running, walking & outdoor activities</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="beach">
+                        <span>🏖️</span>
+                        <strong>Beach & water</strong>
+                        <small>Waves, tides & sea conditions</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="travel">
+                        <span>✈️</span>
+                        <strong>Travel</strong>
+                        <small>Destinations, alerts & packing</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="family">
+                        <span>👨‍👩‍👧</span>
+                        <strong>Family & school</strong>
+                        <small>School commute & rain alerts</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="agriculture">
+                        <span>🌱</span>
+                        <strong>Agriculture & gardening</strong>
+                        <small>Rainfall, soil & crop guidance</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="commute">
+                        <span>🚗</span>
+                        <strong>Daily commute</strong>
+                        <small>Traffic, visibility & weather</small>
+                    </button>
+
+
+                    <button class="interest-card"
+                            data-interest="events">
+                        <span>💍</span>
+                        <strong>Outdoor events</strong>
+                        <small>Rain, comfort & event planning</small>
+                    </button>
+
+                </div>
+
+
+                <div class="onboarding-actions">
+
+                    <span id="selection-count">
+                        Select at least one
+                    </span>
+
+                    <button id="continue-btn"
+                            class="primary-btn"
+                            disabled>
+                        Continue →
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+   <script type="module">
+
+    import {
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+    import {
+        doc,
+        updateDoc
+    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+    import {
+        auth,
+        db
+    } from "{{ url_for('static', filename='js/firebase.js') }}";
+
+
+    const cards =
+        document.querySelectorAll(".interest-card");
+
+    const continueBtn =
+        document.getElementById("continue-btn");
+
+    const selectionCount =
+        document.getElementById("selection-count");
+
+
+    let selectedInterests = [];
+
+    let currentUser = null;
+
+
+    /* =========================
+       CHECK LOGGED-IN USER
+       ========================= */
+
+    onAuthStateChanged(auth, (user) => {
+
+        if (!user) {
+
+            // User is not logged in.
+            // Send them back to signup.
+
+            window.location.href =
+                "/signup";
+
+            return;
+        }
+
+        currentUser = user;
+
+        console.log(
+            "Logged-in user:",
+            currentUser.uid
+        );
+
+    });
+
+
+    /* =========================
+       INTEREST SELECTION
+       ========================= */
+
+    cards.forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            const interest =
+                card.dataset.interest;
+
+
+            card.classList.toggle("selected");
+
+
+            if (
+                selectedInterests.includes(
+                    interest
+                )
+            ) {
+
+                selectedInterests =
+                    selectedInterests.filter(
+                        item => item !== interest
+                    );
+
+            } else {
+
+                selectedInterests.push(
+                    interest
+                );
+
+            }
+
+
+            updateSelection();
+
+        });
+
+    });
+
+
+    /* =========================
+       UPDATE SELECTION UI
+       ========================= */
+
+    function updateSelection() {
+
+        const count =
+            selectedInterests.length;
+
+
+        if (count === 0) {
+
+            selectionCount.textContent =
+                "Select at least one";
+
+            continueBtn.disabled =
+                true;
+
+        } else {
+
+            selectionCount.textContent =
+                `${count} interest${count > 1 ? "s" : ""} selected`;
+
+            continueBtn.disabled =
+                false;
+
+        }
+
+    }
+
+
+    /* =========================
+       SAVE TO FIRESTORE
+       ========================= */
+
+    continueBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (!currentUser) {
+
+                alert(
+                    "Please wait while your account is loaded."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                selectedInterests.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                continueBtn.disabled =
+                    true;
+
+                continueBtn.textContent =
+                    "Saving...";
+
+
+                const userRef =
+                    doc(
+                        db,
+                        "users",
+                        currentUser.uid
+                    );
+
+
+             await updateDoc(
+    userRef,
+    {
+        interests:
+            selectedInterests
+    }
+);
+
+
+// Keep a local copy for the homepage
+localStorage.setItem(
+    "mausamInterests",
+    JSON.stringify(selectedInterests)
+);
+
+
+console.log(
+    "Interests saved:",
+    selectedInterests
+);
+
+
+                window.location.href =
+                    "/location";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error saving interests:",
+                    error
+                );
+
+                alert(
+                    "Could not save your preferences. Please try again."
+                );
+
+
+                continueBtn.disabled =
+                    false;
+
+                continueBtn.textContent =
+                    "Continue →";
+
+            }
+
+        }
+    );
+
+</script>
+</body>
+</html>
